@@ -18,6 +18,14 @@ typedef struct huff_no {
     struct huff_no *dir;
 }huff_no_t;
 
+/*
+    Árvore que contém ponteiro para sua raíz e será montada e remontada
+    para a compressão e extração de arquivos respectivamente
+*/
+typedef struct huff_arvore {
+    huff_no_t *raiz;
+}huff_arvore_t;
+
 int main() {
 
 
