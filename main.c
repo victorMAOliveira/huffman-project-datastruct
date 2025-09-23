@@ -52,8 +52,6 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
     novo_no->c = '*';
     novo_no->freq = no1->freq + no2->freq;
     novo_no->prox = NULL;
-    novo_no->esq = NULL;
-    novo_no->dir = NULL;
 
     if(no1->freq < no2->freq) {
         novo_no->esq = no1;
@@ -67,7 +65,7 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
 }
 
 int main() {
-    huff_no_t *teste = fundir_nos(NULL, NULL);
+    
 
     return 0;
 }
