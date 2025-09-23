@@ -16,7 +16,7 @@ typedef struct huff_no {
     struct huff_no *prox;
     struct huff_no *esq;
     struct huff_no *dir;
-}huff_no_t;
+} huff_no_t;
 
 /*
     Árvore que contém ponteiro para sua raíz e será montada e remontada
@@ -24,7 +24,7 @@ typedef struct huff_no {
 */
 typedef struct huff_arvore {
     huff_no_t *raiz;
-}huff_arvore_t;
+} huff_arvore_t;
 
 /*
     Soma as frequências dos dois nós passados (INVÁLIDO SE UM DELES FOR NULL)
@@ -36,7 +36,7 @@ typedef struct huff_arvore {
 */
 huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
     if(!no1 || !no2) {
-        perror("ERRO[fundir_nos()]: PARÂMETRO NULL\n");
+        fprintf(stderr, "ERRO[fundir_nos()]: PARAMETRO NULL\n");
         return NULL;
     }
 
@@ -45,13 +45,15 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
     
     huff_no_t *novo_no = malloc(sizeof(huff_no_t));
     if(!novo_no) {
-        perror("ERRO[fundir_nos()]: ALOCAÇÃO DE MEMÓRIA DO NÓ FUNDIDO INVÁLIDA\n");
+        fprintf(stderr, "ERRO[fundir_nos()]: ALOCACAO DE MEMORIA DO NO FUNDIDO INVALIDA\n");
         return NULL;
     }
 
     novo_no->c = '*';
     novo_no->freq = no1->freq + no2->freq;
     novo_no->prox = NULL;
+    novo_no->esq = NULL;
+    novo_no->dir = NULL;
 
     if(no1->freq < no2->freq) {
         novo_no->esq = no1;
@@ -65,7 +67,7 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
 }
 
 int main() {
-    
+    huff_no_t *teste = fundir_nos(NULL, NULL);
 
     return 0;
 }
