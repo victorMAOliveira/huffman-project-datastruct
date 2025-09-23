@@ -40,7 +40,8 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
         return NULL;
     }
 
-    no1
+    no1->prox = NULL;
+    no2->prox = NULL;
     
     huff_no_t *novo_no = malloc(sizeof(huff_no_t));
     if(!novo_no) {
