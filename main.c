@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 /*
-    Nó para a Árvore do Algorítimo de Huffman
+    Nó para a Árvore do Algorítimo de Huffman:
     -> Char correspondente
     -> Sua frequência
     -> Ponteiro para o próximo nó (formato de lista encadeada)
@@ -26,8 +26,45 @@ typedef struct huff_arvore {
     huff_no_t *raiz;
 }huff_arvore_t;
 
-int main() {
+/*
+    Soma as frequências dos dois nós passados (INVÁLIDO SE UM DELES FOR NULL)
 
+    ATENÇÃO: nós 1 e 2 passam a apontar para null em 'prox'
+
+    Retorna ponteiro para o novo nó com identificador '*', soma da frequência dos dois nós e 
+    que posiciona o menor nó dos dois à esquerda e o maior à direita (vem com 'prox' apontando para NULL)
+*/
+huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
+    if(!no1 || !no2) {
+        perror("ERRO[fundir_nos()]: PARÂMETRO NULL\n");
+        return NULL;
+    }
+
+    no1
+    
+    huff_no_t *novo_no = malloc(sizeof(huff_no_t));
+    if(!novo_no) {
+        perror("ERRO[fundir_nos()]: ALOCAÇÃO DE MEMÓRIA DO NÓ FUNDIDO INVÁLIDA\n");
+        return NULL;
+    }
+
+    novo_no->c = '*';
+    novo_no->freq = no1->freq + no2->freq;
+    novo_no->prox = NULL;
+
+    if(no1->freq < no2->freq) {
+        novo_no->esq = no1;
+        novo_no->dir = no2;
+    } else {
+        novo_no->esq = no2;
+        novo_no->dir = no1;
+    }
+
+    return novo_no;
+}
+
+int main() {
+    
 
     return 0;
 }
