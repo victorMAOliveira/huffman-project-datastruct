@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
+
+#define MAX_ITERACOES 10000
 
 /*
     Nó para a Árvore do Algorítimo de Huffman:
@@ -25,6 +28,14 @@ typedef struct huff_no {
 typedef struct huff_arvore {
     huff_no_t *raiz;
 } huff_arvore_t;
+
+/*
+    Struct para guardar o endereço dos 2 menores nós da atual lista encadeada
+*/
+typedef struct menores_nos {
+    huff_no_t *menor;
+    huff_no_t *segundo_menor;
+} menores_nos_t;
 
 /*
     Soma as frequências dos dois nós passados (INVÁLIDO SE UM DELES FOR NULL)
@@ -62,6 +73,42 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
     }
 
     return novo_no;
+}
+
+/*
+    Recebe cabeça da lista encadeada e acha os 2 menores nós
+
+    Retorna o struct com o ponteiro dos 2 menores nós
+*/
+menores_nos_t achar_menores(huff_no_t *cabeca) {
+    menores_nos_t menores = {NULL, NULL};
+    int menor = 0, segundo_menor = 0;
+
+    // TODO
+}
+
+/*
+    Esta função vai receber o nó não vazio que começa a lista encadeada
+    com os nós a serem inseridos
+
+    Retorna a raíz da árvore binária que servirá para comprimir o arquivo
+*/
+huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
+    int iteracoes = 0;
+    while(cabeca->prox != NULL) {
+        if(iteracoes > MAX_ITERACOES) {
+            fprintf(stderr, "ERRO[organizar_arvore]: MAXIMO DE ITERACOES ATINGIDO\n");
+            break;
+        }
+        
+        menores_nos_t menores = achar_menores(cabeca);
+
+        huff_no_t *no_fundido = fundir_nos(menores.menor, menores.segundo_menor);
+
+        // TODO
+    }
+
+    // TODO
 }
 
 int main() {
