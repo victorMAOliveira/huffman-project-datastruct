@@ -38,15 +38,26 @@ typedef struct menores_nos {
 } menores_nos_t;
 
 /*
+    Remove o nó passado da lista encadeada
+
+    Retorna cabeça atualizada
+*/
+huff_no_t *remover_no(huff_no_t *cabeca, huff_no_t *no) {
+    // TODO
+}
+
+/*
     Soma as frequências dos dois nós passados (INVÁLIDO SE UM DELES FOR NULL)
+
+    Remove os 2 nós da lista encadeada
 
     ATENÇÃO: nós 1 e 2 passam a apontar para null em 'prox'
 
     Retorna ponteiro para o novo nó com identificador '*', soma da frequência dos dois nós e 
     que posiciona o menor nó dos dois à esquerda e o maior à direita (vem com 'prox' apontando para NULL)
 */
-huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
-    if(!no1 || !no2) {
+huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2, huff_no_t *cabeca) {
+    if(!no1 || !no2 || !cabeca) {
         fprintf(stderr, "ERRO[fundir_nos()]: PARAMETRO NULL\n");
         return NULL;
     }
@@ -63,6 +74,8 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
     novo_no->c = '*';
     novo_no->freq = no1->freq + no2->freq;
     novo_no->prox = NULL;
+    novo_no->esq = NULL;
+    novo_no->dir = NULL;
 
     if(no1->freq < no2->freq) {
         novo_no->esq = no1;
@@ -81,10 +94,43 @@ huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2) {
     Retorna o struct com o ponteiro dos 2 menores nós
 */
 menores_nos_t achar_menores(huff_no_t *cabeca) {
+    if(!cabeca) {
+        fprintf(stderr, "ERRO[achar_menores()]: CABECA DA LISTA VAZIA\n");
+        menores_nos_t menores = {NULL, NULL};
+        return menores;
+    }
+    
     menores_nos_t menores = {NULL, NULL};
-    int menor = 0, segundo_menor = 0;
 
-    // TODO
+    huff_no_t *atual = cabeca;
+    while(atual) {
+        if(!menores.menor || atual->freq <= menores.menor->freq) {
+            menores.menor = atual;
+        } else if(!menores.segundo_menor || atual->freq <= menores.segundo_menor->freq) {
+            menores.segundo_menor = atual;
+        }
+
+        atual = atual->prox;
+    }
+
+    return menores;
+}
+
+/*
+    Empurra o novo nó como cabeça da lista encadeada
+
+    Retorna cabeça da lista atualizada
+*/
+huff_no_t *push_no(huff_no_t *cabeca, huff_no_t *novo_no) {
+    if(!cabeca || !novo_no) {
+        fprintf(stderr, "ERRO[push_no()]: PARAMETRO NULO\n");
+        return NULL;
+    }
+    
+    novo_no->prox = cabeca;
+    cabeca = novo_no;
+
+    return cabeca;
 }
 
 /*
@@ -94,21 +140,22 @@ menores_nos_t achar_menores(huff_no_t *cabeca) {
     Retorna a raíz da árvore binária que servirá para comprimir o arquivo
 */
 huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
-    int iteracoes = 0;
+    if(!cabeca) {
+        fprintf(stderr, "ERRO[organizar_arvore()]: PARAMETRO NULO\n");
+    }
+
     while(cabeca->prox != NULL) {
-        if(iteracoes > MAX_ITERACOES) {
-            fprintf(stderr, "ERRO[organizar_arvore]: MAXIMO DE ITERACOES ATINGIDO\n");
-            break;
-        }
-        
         menores_nos_t menores = achar_menores(cabeca);
 
         huff_no_t *no_fundido = fundir_nos(menores.menor, menores.segundo_menor);
 
-        // TODO
+        cabeca = push_no(cabeca, no_fundido);
     }
 
-    // TODO
+    huff_arvore_t *nova_arvore = malloc(sizeof(huff_arvore_t));
+    nova_arvore->raiz = cabeca;
+
+    return nova_arvore;
 }
 
 int main() {
