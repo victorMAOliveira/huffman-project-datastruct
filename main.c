@@ -181,8 +181,22 @@ huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
     return nova_arvore;
 }
 
+/*
+    Cria e retorna o arquivo .zip com mesmo nome do arquivo original
+*/
+FILE *create_zip(FILE *normal_file, huff_arvore_t *arvore, char file_name[]);
+
 int main() {
     
 
     return 0;
+}
+
+FILE *create_zip(FILE *normal_file, huff_arvore_t *arvore, char file_name[]) {
+    FILE *zip = fopen(file_name_with_dot_zip(file_name), "a");
+
+    char c;
+    while((c = fgetc(normal_file)) != EOF) {
+        // TODO
+    }
 }
