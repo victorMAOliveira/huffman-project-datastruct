@@ -184,19 +184,22 @@ huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
 /*
     Cria e retorna o arquivo .zip com mesmo nome do arquivo original
 */
-FILE *create_zip(FILE *normal_file, huff_arvore_t *arvore, char file_name[]);
+FILE *create_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
+
+char *arqv_nome_zip(char arqv_nome[]);
 
 int main() {
-    
+    // TODO
 
     return 0;
 }
 
-FILE *create_zip(FILE *normal_file, huff_arvore_t *arvore, char file_name[]) {
-    FILE *zip = fopen(file_name_with_dot_zip(file_name), "a");
+FILE *create_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]) {
+    FILE *zip = fopen(arqv_nome_zip(arqv_nome), "a");
+
 
     char c;
-    while((c = fgetc(normal_file)) != EOF) {
-        // TODO
+    while((c = fgetc(arqv)) != EOF) {
+        
     }
 }
