@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdbool.h>
 
+/*dasdasflgf
+sdas */
+
 /*
     Nó para a Árvore do Algorítimo de Huffman:
     -> Char correspondente
