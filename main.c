@@ -218,6 +218,17 @@ FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char *zip_nome) {
     criar_codigos(codigos, arvore->raiz);
 }
 
+void criar_codigos(codigo_t codigos[], huff_no_t *raiz)
+{
+    for (int i = 0; i < TABELA_TAM; i++) {
+        codigos[i].c = 0;
+        codigos[i].binario = NULL;
+    }
+
+    char buffer[TABELA_TAM];
+    montar_codigos(raiz, codigos, buffer, 0);
+}
+
 void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int profundidade) {
     if(!raiz)
         return;
@@ -228,16 +239,16 @@ void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int prof
 
         codigos[indice].c = raiz->c;
         codigos[indice].binario = malloc(sizeof(char) * (profundidade + 1));
-    }
-}
 
-void criar_codigos(codigo_t codigos[], huff_no_t *raiz)
-{
-    for (int i = 0; i < TABELA_TAM; i++) {
-        codigos[i].c = 0;
-        codigos[i].binario = NULL;
+        if(codigos[indice].binario)
+            strcpy(codigos[indice].binario, buffer);
+
+        return;
     }
 
-    char buffer[TABELA_TAM];
-    montar_codigos(raiz, codigos, buffer, 0);
+    buffer[profundidade] = '0';
+    montar_codigos(codigos, raiz->esq, buffer, profundidade + 1);
+
+    buffer[profundidade] = '1';
+    montar_codigos(codigos, raiz->dir, buffer, profundidade + 1);
 }
