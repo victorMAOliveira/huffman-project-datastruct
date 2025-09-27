@@ -196,7 +196,9 @@ huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
 */
 FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
 
-void montar_codigos(codigo_t *codigos, huff_no_t *raiz);
+void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int indice);
+
+void criar_codigos(codigo_t *codigos, huff_no_t *raiz);
 
 int main() {
     // TODO
@@ -211,15 +213,31 @@ FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char *zip_nome) {
         return NULL;
     }
 
-    codigo_t *codigos = malloc(sizeof(codigo_t) * TABELA_TAM);
-    if(!codigos) {
-        fprintf(stderr, "ERRO[criar_zip()]: ALOCACAO MEMORIA CODIGOS\n");
-        return NULL;
-    }
+    codigo_t codigos[TABELA_TAM];
 
-    montar_codigos(codigos, arvore->raiz);
+    criar_codigos(codigos, arvore->raiz);
 }
 
-void montar_codigos(codigo_t *codigos, huff_no_t *raiz) {
+void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int profundidade) {
+    if(!raiz)
+        return;
     
+    if(!raiz->esq && !raiz->dir) {
+        buffer[profundidade] = '\0';
+        unsigned char indice = (unsigned char)raiz->c;
+
+        codigos[indice].c = raiz->c;
+        codigos[indice].binario = malloc(sizeof(char) * (profundidade + 1));
+    }
+}
+
+void criar_codigos(codigo_t codigos[], huff_no_t *raiz)
+{
+    for (int i = 0; i < TABELA_TAM; i++) {
+        codigos[i].c = 0;
+        codigos[i].binario = NULL;
+    }
+
+    char buffer[TABELA_TAM];
+    montar_codigos(raiz, codigos, buffer, 0);
 }
