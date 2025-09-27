@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#define TABELA_TAM 256
+
 /*
     Nó para a Árvore do Algorítimo de Huffman:
     -> Char correspondente
@@ -34,6 +36,14 @@ typedef struct menores_nos {
     huff_no_t *menor;
     huff_no_t *segundo_menor;
 } menores_nos_t;
+
+/*
+    Struct para guardar um caractere e seu novo código binário
+*/
+typedef struct codigo {
+    char c;
+    char *binario;
+} codigo_t;
 
 /*
     Remove o nó passado da lista encadeada
@@ -184,9 +194,9 @@ huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
 /*
     Cria e retorna o arquivo .zip com mesmo nome do arquivo original
 */
-FILE *create_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
+FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
 
-char *arqv_nome_zip(char arqv_nome[]);
+void montar_codigos(codigo_t *codigos, huff_no_t *raiz);
 
 int main() {
     // TODO
@@ -194,12 +204,22 @@ int main() {
     return 0;
 }
 
-FILE *create_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]) {
-    FILE *zip = fopen(arqv_nome_zip(arqv_nome), "a");
-
-
-    char c;
-    while((c = fgetc(arqv)) != EOF) {
-        
+FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char *zip_nome) {
+    FILE *zip = fopen(zip_nome, "wb");
+    if(!zip) {
+        fprintf(stderr, "ERRO[criar_zip()]: ABERTURA DO ARQUIVO ZIP\n");
+        return NULL;
     }
+
+    codigo_t *codigos = malloc(sizeof(codigo_t) * TABELA_TAM);
+    if(!codigos) {
+        fprintf(stderr, "ERRO[criar_zip()]: ALOCACAO MEMORIA CODIGOS\n");
+        return NULL;
+    }
+
+    montar_codigos(codigos, arvore->raiz);
+}
+
+void montar_codigos(codigo_t *codigos, huff_no_t *raiz) {
+    
 }
