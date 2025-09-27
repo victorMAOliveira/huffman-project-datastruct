@@ -45,6 +45,78 @@ typedef struct codigo {
     char *binario;
 } codigo_t;
 
+huff_no_t *remover_no(huff_no_t *cabeca, huff_no_t *no);
+
+huff_no_t *fundir_nos(huff_no_t *no1, huff_no_t *no2, huff_no_t **cabeca);
+
+menores_nos_t achar_menores(huff_no_t *cabeca); 
+
+huff_no_t *push_no(huff_no_t *cabeca, huff_no_t *novo_no);
+
+huff_arvore_t *organizar_arvore(huff_no_t *cabeca);
+
+FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
+
+void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int indice);
+
+void criar_codigos(codigo_t *codigos, huff_no_t *raiz);
+
+int main() {
+    // TODO
+
+    return 0;
+}
+
+/*
+    Cria e retorna o arquivo .zip com mesmo nome do arquivo original
+*/
+FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char *zip_nome) {
+    FILE *zip = fopen(zip_nome, "wb");
+    if(!zip) {
+        fprintf(stderr, "ERRO[criar_zip()]: ABERTURA DO ARQUIVO ZIP\n");
+        return NULL;
+    }
+
+    codigo_t codigos[TABELA_TAM];
+
+    criar_codigos(codigos, arvore->raiz);
+}
+
+void criar_codigos(codigo_t codigos[], huff_no_t *raiz)
+{
+    for (int i = 0; i < TABELA_TAM; i++) {
+        codigos[i].c = 0;
+        codigos[i].binario = NULL;
+    }
+
+    char buffer[TABELA_TAM];
+    montar_codigos(raiz, codigos, buffer, 0);
+}
+
+void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int profundidade) {
+    if(!raiz)
+        return;
+    
+    if(!raiz->esq && !raiz->dir) {
+        buffer[profundidade] = '\0';
+        unsigned char indice = (unsigned char)raiz->c;
+
+        codigos[indice].c = raiz->c;
+        codigos[indice].binario = malloc(sizeof(char) * (profundidade + 1));
+
+        if(codigos[indice].binario)
+            strcpy(codigos[indice].binario, buffer);
+
+        return;
+    }
+
+    buffer[profundidade] = '0';
+    montar_codigos(codigos, raiz->esq, buffer, profundidade + 1);
+
+    buffer[profundidade] = '1';
+    montar_codigos(codigos, raiz->dir, buffer, profundidade + 1);
+}
+
 /*
     Remove o nó passado da lista encadeada
 
@@ -189,66 +261,4 @@ huff_arvore_t *organizar_arvore(huff_no_t *cabeca) {
     nova_arvore->raiz = cabeca;
 
     return nova_arvore;
-}
-
-/*
-    Cria e retorna o arquivo .zip com mesmo nome do arquivo original
-*/
-FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
-
-void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int indice);
-
-void criar_codigos(codigo_t *codigos, huff_no_t *raiz);
-
-int main() {
-    // TODO
-
-    return 0;
-}
-
-FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char *zip_nome) {
-    FILE *zip = fopen(zip_nome, "wb");
-    if(!zip) {
-        fprintf(stderr, "ERRO[criar_zip()]: ABERTURA DO ARQUIVO ZIP\n");
-        return NULL;
-    }
-
-    codigo_t codigos[TABELA_TAM];
-
-    criar_codigos(codigos, arvore->raiz);
-}
-
-void criar_codigos(codigo_t codigos[], huff_no_t *raiz)
-{
-    for (int i = 0; i < TABELA_TAM; i++) {
-        codigos[i].c = 0;
-        codigos[i].binario = NULL;
-    }
-
-    char buffer[TABELA_TAM];
-    montar_codigos(raiz, codigos, buffer, 0);
-}
-
-void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int profundidade) {
-    if(!raiz)
-        return;
-    
-    if(!raiz->esq && !raiz->dir) {
-        buffer[profundidade] = '\0';
-        unsigned char indice = (unsigned char)raiz->c;
-
-        codigos[indice].c = raiz->c;
-        codigos[indice].binario = malloc(sizeof(char) * (profundidade + 1));
-
-        if(codigos[indice].binario)
-            strcpy(codigos[indice].binario, buffer);
-
-        return;
-    }
-
-    buffer[profundidade] = '0';
-    montar_codigos(codigos, raiz->esq, buffer, profundidade + 1);
-
-    buffer[profundidade] = '1';
-    montar_codigos(codigos, raiz->dir, buffer, profundidade + 1);
 }
