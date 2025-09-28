@@ -94,7 +94,7 @@ unsigned char *get_arqv_comprimido(char *arqv_nome, long tamanho_arqv, codigo_t 
     int binario_tam = 0;
 
     int c;
-    while((c == fgetc(arqv)) != EOF) {
+    while((c = fgetc(arqv)) != EOF) {
         unsigned char uc = (unsigned char)c;
         if(codigos[uc].binario) {
             int code_tam = strlen(codigos[uc].binario);
