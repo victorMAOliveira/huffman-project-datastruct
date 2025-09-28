@@ -55,11 +55,15 @@ huff_no_t *push_no(huff_no_t *cabeca, huff_no_t *novo_no);
 
 huff_arvore_t *organizar_arvore(huff_no_t *cabeca);
 
-FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char arqv_nome[]);
+void criar_zip(char *arqv_nome, huff_arvore_t *arvore);
 
 void montar_codigos(codigo_t codigos[], huff_no_t *raiz, char buffer[], int indice);
 
 void criar_codigos(codigo_t *codigos, huff_no_t *raiz);
+
+long get_tamanho_arqv(char *arqv_nome);
+
+unsigned char *get_arqv_comprimido(char *arqv_nome, long tamanho_arqv, codigo_t codigos[]);
 
 int main() {
     // TODO
@@ -67,19 +71,79 @@ int main() {
     return 0;
 }
 
-/*
-    Cria e retorna o arquivo .zip com mesmo nome do arquivo original
-*/
-FILE *criar_zip(FILE *arqv, huff_arvore_t *arvore, char *zip_nome) {
-    FILE *zip = fopen(zip_nome, "wb");
-    if(!zip) {
-        fprintf(stderr, "ERRO[criar_zip()]: ABERTURA DO ARQUIVO ZIP\n");
+void criar_zip(char *arqv_nome, huff_arvore_t *arvore) {
+    long tamanho_arqv = get_tamanho_arqv(arqv_nome);
+
+    codigo_t codigos[TABELA_TAM];
+    criar_codigos(codigos, arvore->raiz);
+
+    char *arqv_comprimido = get_arqv_comprimido(arqv_nome, tamanho_arqv, codigos);
+
+    reescrever_arqv(arqv_nome, arqv_comprimido);
+}
+
+unsigned char *get_arqv_comprimido(char *arqv_nome, long tamanho_arqv, codigo_t codigos[]) {
+    FILE *arqv = fopen(arqv_nome, "r");
+    char *binario_temp = malloc(sizeof(char) * tamanho_arqv * 8 + 1);
+    if(!binario_temp) {
+        fprintf(stderr, "ERRO: Não foi possível abrir o arquivo %s\n", arqv_nome);
         return NULL;
     }
 
-    codigo_t codigos[TABELA_TAM];
+    binario_temp[0] = '\0';
+    int binario_tam = 0;
 
-    criar_codigos(codigos, arvore->raiz);
+    int c;
+    while((c == fgetc(arqv)) != EOF) {
+        unsigned char uc = (unsigned char)c;
+        if(codigos[uc].binario) {
+            int code_tam = strlen(codigos[uc].binario);
+
+            if(binario_tam + code_tam < tamanho_arqv * 8) {
+                strcat(binario_temp, codigos[uc].binario);
+                binario_tam += code_tam;
+            }
+        }
+    }
+    
+    fclose(arqv);
+
+    int total_bits = strlen(binario_temp);
+    int total_bytes = (total_bits + 7) / 8;
+
+    unsigned char *str_comprimido = malloc(sizeof(unsigned char) * (total_bytes + 1));
+    if (!str_comprimido) {
+        free(binario_temp);
+        fprintf(stderr, "ERRO: Falha na alocação de memória para string comprimida\n");
+        return NULL;
+    }
+
+    for (int i = 0; i < total_bytes; i++) {
+        unsigned char byte = 0;
+        for (int j = 0; j < 8; j++) {
+            int bit_pos = i * 8 + j;
+            if (bit_pos < total_bits && binario_temp[bit_pos] == '1') {
+                byte |= (1 << (7 - j));
+            }
+        }
+        str_comprimido[i] = byte;
+    }
+
+    str_comprimido[total_bytes] = (unsigned char)(8 - (total_bits % 8)) % 8;
+
+    free(binario_temp);
+    return str_comprimido;
+}
+
+long get_tamanho_arqv(char *arqv_nome) {
+    FILE *arqv = fopen(arqv_nome, "rb");
+
+    fseek(arqv, 0, SEEK_END);
+    long tam = ftell(arqv);
+
+    fclose(arqv);
+
+    return tam;
 }
 
 void criar_codigos(codigo_t codigos[], huff_no_t *raiz)
